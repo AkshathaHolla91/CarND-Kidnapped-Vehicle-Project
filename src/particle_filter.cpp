@@ -26,7 +26,7 @@ void ParticleFilter::init(double x, double y, double theta, double std[]) {
 	// Add random Gaussian noise to each particle.
 	// NOTE: Consult particle_filter.h for more information about this method (and others in this file).
 	default_random_engine gen;
-	num_particles=50;
+	num_particles=75;
 	weights.resize(num_particles);
 	particles.resize(num_particles);
 	normal_distribution<double>dist_x(x,std[0]);
@@ -116,11 +116,13 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 		std::vector<int> associations;
 		std::vector<double> sense_x;
 		std::vector<double> sense_y;
+		double cos_theta=cos(particles[i].theta);
+		double sin_theta=sin(particles[i].theta);
 		for(int k=0;k<observations.size();k++){
 			LandmarkObs landmark;
 			landmark.id=observations[k].id;
-			landmark.x=particles[i].x+(cos(particles[i].theta)*observations[k].x)-(sin(particles[i].theta)*observations[k].y);
-			landmark.y=particles[i].y+(sin(particles[i].theta)*observations[k].x)+(cos(particles[i].theta)*observations[k].y);
+			landmark.x=particles[i].x+(cos_theta*observations[k].x)-(sin_theta*observations[k].y);
+			landmark.y=particles[i].y+(sin_theta*observations[k].x)+(cos_theta*observations[k].y);
 			observations_map_co_ord.push_back(landmark);
 		}
 		for(int j=0;j<map_landmarks.landmark_list.size();j++){
